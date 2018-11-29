@@ -9,6 +9,7 @@ public class Exportar {
 	ArrayList<String> listaTexto;
 	Processo[] listaProcesso;
 	String tipo;
+	String local = System.getProperty("user.home");
 	File file;
 	public Exportar(ArrayList<String> t) {
 		this.listaTexto = t;
@@ -19,11 +20,11 @@ public class Exportar {
 		this.tipo = p;
 	}
 	public void escrever() throws IOException {
-		file = new File("C:\\Users\\iagop\\Desktop\\input00.txt");
+		file = new File(local + "\\Desktop\\input00.txt");
 		if(file.exists()==true) {
 			int i = 01;
 			while(file.exists()) {
-				file.renameTo(new File("C:\\Users\\iagop\\Desktop\\input" + i + ".txt"));
+				file.renameTo(new File(local + "\\Desktop\\input" + i + ".txt"));
 				i++;
 			}
 		}

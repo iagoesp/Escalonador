@@ -162,137 +162,10 @@ public class ProcessoFrame implements CaretListener{
 		criarLB.setEnabled(false);
 		
 		okBT = new JButton("Definir");
-		okBT.addMouseListener(new MouseAdapter() {
+		okBT.addMouseListener(new MouseAdapter() { //vai gerar as jpanels, cada uma com componentes de informações para inserir as chegada, execução, deadline e prioridade
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				String aux = quantProcTF.getText();
-				int tam = aux.length();
-				quantProc = 0;
-				sobrecarga = Integer.parseInt(sobrecargaTF.getText());
-				quantum = Integer.parseInt(quantumTF.getText());
-				panel_1.removeAll();
-				for(int i = 0; i < tam; i++)
-					quantProc += (int) ((aux.charAt(tam-i-1)-48)*Math.pow(10,i));
-				if(quantProc>0) {
-					jpanels = new Processo[quantProc];
-					tipo = defineTipo();
-					GridBagConstraints gbc_panel[] = new GridBagConstraints[quantProc];
-					panel_1.setPreferredSize(new Dimension(899, 100*quantProc));
-					panel_1.setSize(new Dimension(400, 100*quantProc));
-					for(int i = 0; i <quantProc; i++) {
-						jpanels[i] = new Processo();
-						jpanels[i].setQ(quantum);
-						jpanels[i].setS(sobrecarga);
-						jpanels[i].setBorder(new TitledBorder(null, "Processo " + (i + 1), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-						gbc_panel[i] = new GridBagConstraints();
-						gbc_panel[i].insets = new Insets(0, 0, 0, 5);
-						gbc_panel[i].fill = GridBagConstraints.HORIZONTAL;
-						gbc_panel[i].gridx = 1;
-						gbc_panel[i].gridy = 3 + i;
-						
-						jpanels[i].lblTempoDeChegada = new JLabel("Tempo de Chegada");
-						jpanels[i].add(jpanels[i].lblTempoDeChegada);
-						
-						jpanels[i].tChegTF = new JTextField();
-						jpanels[i].add(jpanels[i].tChegTF);
-						jpanels[i].tChegTF.setColumns(10);
-						
-						jpanels[i].lblTempoDeExecuo = new JLabel("Tempo de Execu\u00E7\u00E3o");
-						jpanels[i].add(jpanels[i].lblTempoDeExecuo);
-						
-						jpanels[i].tExecTF = new JTextField();
-						jpanels[i].add(jpanels[i].tExecTF);
-						jpanels[i].tExecTF.setColumns(10);
-						
-						jpanels[i].lblDeadline = new JLabel("Deadline");
-						jpanels[i].add(jpanels[i].lblDeadline);
-						
-						jpanels[i].tDeadTF = new JTextField();
-						jpanels[i].add(jpanels[i].tDeadTF);
-						jpanels[i].tDeadTF.setColumns(10);
-						
-						jpanels[i].lblPrioridade = new JLabel("Prioridade");
-						jpanels[i].add(jpanels[i].lblPrioridade);
-						
-						jpanels[i].tPriorTF = new JTextField();
-						jpanels[i].add(jpanels[i].tPriorTF);
-						jpanels[i].tPriorTF.setColumns(10);
-						
-						jpanels[i].tChegTF.setText("");
-						jpanels[i].tExecTF.setText("");
-						jpanels[i].tDeadTF.setText("");
-						jpanels[i].tPriorTF.setText("");
-						jpanels[i].addCaret();
-						
-						jpanels[i].okProcBT = new JButton("Definir");
-						jpanels[i].okProcBT.setEnabled(false);
-						
-						final int j = i;
-						
-						jpanels[i].okProcBT.addMouseListener(new MouseAdapter() {
-							boolean clicked = false;
-							@Override
-							public void mouseClicked(MouseEvent arg0) {
-								if(jpanels[j].okProcBT.isEnabled()==true) {
-									clicked = true;
-									jpanels[j].tChegTF.setEditable(false);
-									jpanels[j].tDeadTF.setEditable(false);
-									jpanels[j].tExecTF.setEditable(false);
-									jpanels[j].tPriorTF.setEditable(false);
-									jpanels[j].setPrior(Integer.parseInt(jpanels[j].tPriorTF.getText()));
-									jpanels[j].setCheg(Integer.parseInt(jpanels[j].tChegTF.getText()));
-									jpanels[j].setDead(Integer.parseInt(jpanels[j].tDeadTF.getText()));
-									jpanels[j].setExec(Integer.parseInt(jpanels[j].tExecTF.getText()));
-									int s = j + 1;
-									jpanels[j].setID(Integer.toString((s)));
-								}
-							}
-							public void mouseExited(MouseEvent arg0) {
-								if(clicked) {
-								    jpanels[j].setReady(true);
-							    	boolean ok = true;
-								    for(int k = 0; k < jpanels.length; k++) {
-								    	if(jpanels[k].getReady()==false) {
-								    		ok = false;
-								    		break;
-								    	}
-								    }
-								    if(ok){
-							    		criarLB.setEnabled(true);
-							    	}	    		
-								    try { Thread.sleep (500);
-								    	panel_1.remove(jpanels[j]);
-								    }catch (InterruptedException ex) {}
-							        frame.revalidate();
-									frame.repaint();
-									
-//									for(int i = 0; i < jpanels.length;i++) {
-//										System.out.println(jpanels[i].getCheg() +", " + jpanels[i].getExec() +", " +  jpanels[i].getDead() +", " +  jpanels[i].getPrior());
-//									}
-								}
-								clicked = false;
-							}
-						});
-						jpanels[i].add(jpanels[i].okProcBT);
-						
-						panel_1.add(jpanels[i], gbc_panel[i]);
-						panel_1.revalidate();
-						panel_1.repaint();
-						frame.revalidate();
-						frame.repaint();
-						
-					}
-				}						
-			}
-
-			private String defineTipo() {
-				if(fifoRB.isSelected())
-					return "FIFO";
-				else if(roundRRB.isSelected())
-					return "Round Robin";
-				else if(sjfRB.isSelected())
-					return "SJF";
-				return "EDF";
+				descreverProcessos();
 			}
 		});
 		
@@ -382,5 +255,137 @@ public class ProcessoFrame implements CaretListener{
 		d.setSelected(true);
 		algB = true;
 		caretUpdate(null);
+	}
+	
+	public void descreverProcessos() {
+		String aux = quantProcTF.getText();
+		int tam = aux.length();
+		quantProc = 0;
+		sobrecarga = Integer.parseInt(sobrecargaTF.getText());
+		quantum = Integer.parseInt(quantumTF.getText());
+		panel_1.removeAll();
+		for(int i = 0; i < tam; i++)
+			quantProc += (int) ((aux.charAt(tam-i-1)-48)*Math.pow(10,i));
+		if(quantProc>0) {
+			jpanels = new Processo[quantProc];
+			tipo = defineTipo();
+			GridBagConstraints gbc_panel[] = new GridBagConstraints[quantProc];
+			panel_1.setPreferredSize(new Dimension(899, 100*quantProc));
+			panel_1.setSize(new Dimension(400, 100*quantProc));
+			for(int i = 0; i <quantProc; i++) {
+				jpanels[i] = new Processo();
+				jpanels[i].setQ(quantum);
+				jpanels[i].setS(sobrecarga);
+				jpanels[i].setBorder(new TitledBorder(null, "Processo " + (i + 1), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+				gbc_panel[i] = new GridBagConstraints();
+				gbc_panel[i].insets = new Insets(0, 0, 0, 5);
+				gbc_panel[i].fill = GridBagConstraints.HORIZONTAL;
+				gbc_panel[i].gridx = 1;
+				gbc_panel[i].gridy = 3 + i;
+				
+				jpanels[i].lblTempoDeChegada = new JLabel("Tempo de Chegada");
+				jpanels[i].add(jpanels[i].lblTempoDeChegada);
+				
+				jpanels[i].tChegTF = new JTextField();
+				jpanels[i].add(jpanels[i].tChegTF);
+				jpanels[i].tChegTF.setColumns(10);
+				
+				jpanels[i].lblTempoDeExecuo = new JLabel("Tempo de Execu\u00E7\u00E3o");
+				jpanels[i].add(jpanels[i].lblTempoDeExecuo);
+				
+				jpanels[i].tExecTF = new JTextField();
+				jpanels[i].add(jpanels[i].tExecTF);
+				jpanels[i].tExecTF.setColumns(10);
+				
+				jpanels[i].lblDeadline = new JLabel("Deadline");
+				jpanels[i].add(jpanels[i].lblDeadline);
+				
+				jpanels[i].tDeadTF = new JTextField();
+				jpanels[i].add(jpanels[i].tDeadTF);
+				jpanels[i].tDeadTF.setColumns(10);
+				
+				jpanels[i].lblPrioridade = new JLabel("Prioridade");
+				jpanels[i].add(jpanels[i].lblPrioridade);
+				
+				jpanels[i].tPriorTF = new JTextField();
+				jpanels[i].add(jpanels[i].tPriorTF);
+				jpanels[i].tPriorTF.setColumns(10);
+				
+				jpanels[i].tChegTF.setText("");
+				jpanels[i].tExecTF.setText("");
+				jpanels[i].tDeadTF.setText("");
+				jpanels[i].tPriorTF.setText("");
+				jpanels[i].addCaret();
+				
+				jpanels[i].okProcBT = new JButton("Definir");
+				jpanels[i].okProcBT.setEnabled(false);
+				
+				final int j = i;
+				
+				jpanels[i].okProcBT.addMouseListener(new MouseAdapter() {
+					boolean clicked = false;
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if(jpanels[j].okProcBT.isEnabled()==true) {
+							clicked = true;
+							jpanels[j].tChegTF.setEditable(false);
+							jpanels[j].tDeadTF.setEditable(false);
+							jpanels[j].tExecTF.setEditable(false);
+							jpanels[j].tPriorTF.setEditable(false);
+							jpanels[j].setPrior(Integer.parseInt(jpanels[j].tPriorTF.getText()));
+							jpanels[j].setCheg(Integer.parseInt(jpanels[j].tChegTF.getText()));
+							jpanels[j].setDead(Integer.parseInt(jpanels[j].tDeadTF.getText()));
+							jpanels[j].setExec(Integer.parseInt(jpanels[j].tExecTF.getText()));
+							int s = j + 1;
+							jpanels[j].setID(Integer.toString((s)));
+						}
+					}
+					public void mouseExited(MouseEvent arg0) {
+						if(clicked) {
+						    jpanels[j].setReady(true);
+					    	boolean ok = true;
+						    for(int k = 0; k < jpanels.length; k++) {
+						    	if(jpanels[k].getReady()==false) {
+						    		ok = false;
+						    		break;
+						    	}
+						    }
+						    if(ok){
+					    		criarLB.setEnabled(true);
+					    	}	    		
+						    try { Thread.sleep (500);
+						    	panel_1.remove(jpanels[j]);
+						    }catch (InterruptedException ex) {}
+					        frame.revalidate();
+							frame.repaint();
+							
+//							for(int i = 0; i < jpanels.length;i++) {
+//								System.out.println(jpanels[i].getCheg() +", " + jpanels[i].getExec() +", " +  jpanels[i].getDead() +", " +  jpanels[i].getPrior());
+//							}
+						}
+						clicked = false;
+					}
+				});
+				jpanels[i].add(jpanels[i].okProcBT);
+				
+				panel_1.add(jpanels[i], gbc_panel[i]);
+				panel_1.revalidate();
+				panel_1.repaint();
+				frame.revalidate();
+				frame.repaint();
+				
+			}
+			
+		}	
+		
+	}
+	private String defineTipo() {
+		if(fifoRB.isSelected())
+			return "FIFO";
+		else if(roundRRB.isSelected())
+			return "Round Robin";
+		else if(sjfRB.isSelected())
+			return "SJF";
+		return "EDF";
 	}
 }
