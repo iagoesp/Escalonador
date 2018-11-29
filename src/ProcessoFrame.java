@@ -34,7 +34,7 @@ public class ProcessoFrame implements CaretListener{
 	private JTextField quantProcTF;
 	private JTextField sobrecargaTF;
 	private JTextField quantumTF;
-	private int quantProc;
+	private int quantProcessos;
 	private int sobrecarga;
 	private int quantum;
 	private Processo jpanels[];
@@ -133,11 +133,11 @@ public class ProcessoFrame implements CaretListener{
 		gbc_panel_1.gridy = 2;
 		frame.getContentPane().add(panel_1, gbc_panel_1);
 				
-		criarLB = new JButton("Criar");
+		criarLB = new JButton("Criar"); //botão Criar
 		criarLB.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if(criarLB.isEnabled()==true) {
+				if(criarLB.isEnabled()==true) { //quando o botão estiver habilitado, vai permitir a criação da lista com os processos e mandar para o escalonador
 					ArrayList<Processo> lista = new ArrayList<Processo>();
 					for(int i = 0; i < jpanels.length; i++) {
 						int c = jpanels[i].getCheg();
@@ -145,13 +145,13 @@ public class ProcessoFrame implements CaretListener{
 						int d = jpanels[i].getDead();
 						int p = jpanels[i].getPrior();
 						String id = jpanels[i].getID();
-						Processo p1 = new Processo(id, c, e, d, p);
-						lista.add(p1);
+						Processo p1 = new Processo(id, c, e, d, p); //criar processo para cada componente "Processo" e adicionar em uma lista para mandar para o Escalonador
+						lista.add(p1); //adiciona cada processo na lista
 					}
 					
-					Escalonador esc = new Escalonador(lista, tipo, quantum, sobrecarga);
+					Escalonador esc = new Escalonador(lista, tipo, quantum, sobrecarga); //chama o escalonador
 					try {
-						esc.a();
+						esc.main();// chama o método main do arquivo
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -161,7 +161,7 @@ public class ProcessoFrame implements CaretListener{
 		});
 		criarLB.setEnabled(false);
 		
-		okBT = new JButton("Definir");
+		okBT = new JButton("Definir"); //botão Definir
 		okBT.addMouseListener(new MouseAdapter() { //vai gerar as jpanels, cada uma com componentes de informações para inserir as chegada, execução, deadline e prioridade
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -242,7 +242,7 @@ public class ProcessoFrame implements CaretListener{
 		else
 			algB = false;
 		if(procB && sobreB && quantB && algB) {
-			okBT.setEnabled(true);
+			okBT.setEnabled(true); //habilita o botão de definir para cada processo
 		}
 		else
 			okBT.setEnabled(false);
@@ -260,28 +260,28 @@ public class ProcessoFrame implements CaretListener{
 	public void descreverProcessos() {
 		String aux = quantProcTF.getText();
 		int tam = aux.length();
-		quantProc = 0;
+		quantProcessos = 0; //quantidade de Procesoss
 		sobrecarga = Integer.parseInt(sobrecargaTF.getText());
 		quantum = Integer.parseInt(quantumTF.getText());
 		panel_1.removeAll();
 		for(int i = 0; i < tam; i++)
-			quantProc += (int) ((aux.charAt(tam-i-1)-48)*Math.pow(10,i));
-		if(quantProc>0) {
-			jpanels = new Processo[quantProc];
-			tipo = defineTipo();
-			GridBagConstraints gbc_panel[] = new GridBagConstraints[quantProc];
-			panel_1.setPreferredSize(new Dimension(899, 100*quantProc));
-			panel_1.setSize(new Dimension(400, 100*quantProc));
-			for(int i = 0; i <quantProc; i++) {
-				jpanels[i] = new Processo();
+			quantProcessos += (int) ((aux.charAt(tam-i-1)-48)*Math.pow(10,i)); //conversão da String para inteiro, tava tendo algum problema aí fiz assim
+		if(quantProcessos>0) {
+			jpanels = new Processo[quantProcessos]; //define qual o tamanho das jPanels (componente para cada processo contendo as lacunas para inserir as infos, array de Processo
+			tipo = defineTipo();	//coleta o tipo que foi habilitado no processo
+			GridBagConstraints gbc_panel[] = new GridBagConstraints[quantProcessos];
+			panel_1.setPreferredSize(new Dimension(899, 100*quantProcessos));
+			panel_1.setSize(new Dimension(400, 100*quantProcessos));
+			for(int i = 0; i <quantProcessos; i++) { // criação das jpanels
+				jpanels[i] = new Processo(); //cada jpanels[i] é um processo
 				jpanels[i].setQ(quantum);
 				jpanels[i].setS(sobrecarga);
-				jpanels[i].setBorder(new TitledBorder(null, "Processo " + (i + 1), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+				jpanels[i].setBorder(new TitledBorder(null, "Processo " + (i + 1), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //define o nome do Processo
 				gbc_panel[i] = new GridBagConstraints();
 				gbc_panel[i].insets = new Insets(0, 0, 0, 5);
 				gbc_panel[i].fill = GridBagConstraints.HORIZONTAL;
 				gbc_panel[i].gridx = 1;
-				gbc_panel[i].gridy = 3 + i;
+				gbc_panel[i].gridy = 3 + i; //define as coordenadas em que cada j panels estará
 				
 				jpanels[i].lblTempoDeChegada = new JLabel("Tempo de Chegada");
 				jpanels[i].add(jpanels[i].lblTempoDeChegada);
@@ -318,7 +318,7 @@ public class ProcessoFrame implements CaretListener{
 				jpanels[i].addCaret();
 				
 				jpanels[i].okProcBT = new JButton("Definir");
-				jpanels[i].okProcBT.setEnabled(false);
+				jpanels[i].okProcBT.setEnabled(false); //está desabilitado pois deve-se informar todas as informações do processo para criar o processo correspondente
 				
 				final int j = i;
 				
@@ -326,18 +326,18 @@ public class ProcessoFrame implements CaretListener{
 					boolean clicked = false;
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
-						if(jpanels[j].okProcBT.isEnabled()==true) {
+						if(jpanels[j].okProcBT.isEnabled()==true) { //quando 
 							clicked = true;
 							jpanels[j].tChegTF.setEditable(false);
 							jpanels[j].tDeadTF.setEditable(false);
 							jpanels[j].tExecTF.setEditable(false);
 							jpanels[j].tPriorTF.setEditable(false);
-							jpanels[j].setPrior(Integer.parseInt(jpanels[j].tPriorTF.getText()));
-							jpanels[j].setCheg(Integer.parseInt(jpanels[j].tChegTF.getText()));
-							jpanels[j].setDead(Integer.parseInt(jpanels[j].tDeadTF.getText()));
-							jpanels[j].setExec(Integer.parseInt(jpanels[j].tExecTF.getText()));
+							jpanels[j].setPrior(Integer.parseInt(jpanels[j].tPriorTF.getText())); 	//insere a informação de Prioridade do processo
+							jpanels[j].setCheg(Integer.parseInt(jpanels[j].tChegTF.getText()));		//insere a informação de tempo de chegada do processo
+							jpanels[j].setDead(Integer.parseInt(jpanels[j].tDeadTF.getText()));		//insere a informação de Deadline do processo
+							jpanels[j].setExec(Integer.parseInt(jpanels[j].tExecTF.getText()));		//insere a informação de Execução do processo
 							int s = j + 1;
-							jpanels[j].setID(Integer.toString((s)));
+							jpanels[j].setID(Integer.toString((s)));		//insere a informação do número do processo
 						}
 					}
 					public void mouseExited(MouseEvent arg0) {

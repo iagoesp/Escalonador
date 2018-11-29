@@ -6,7 +6,7 @@ public class Escalonador{
 	private ArrayList<Processo> listaProcessos;
 	private ArrayList<Processo> finalizados;
 	
-	private ArrayList<Processo> main;
+	private ArrayList<Processo> escalonador;
 	private ArrayList<String> linha;
 	
 	private String processo;
@@ -22,7 +22,7 @@ public class Escalonador{
 		this.quantum = q;
 		this.sobrecarga = s;
 		this.finalizados = new ArrayList<Processo>();
-		this.main = new ArrayList<Processo>();
+		this.escalonador = new ArrayList<Processo>();
 		this.linha = new ArrayList<String>();
 	}
 	public ArrayList<Processo> getLista(){
@@ -48,19 +48,20 @@ public class Escalonador{
 	}
 
 	int buscarProcesso(String p){
+		System.out.println(p);
 		int index = 0;
-		for(int i = 1; i < main.size(); i++) {
+		for(int i = 1; i < escalonador.size(); i++) {
 			if(p=="FIFO")
-				if(main.get(i).getCheg() < main.get(index).getCheg()) {
+				if(escalonador.get(i).getCheg() < escalonador.get(index).getCheg()) {
 					index = i;
 				}
 			else if(p=="SJF")
-				if(main.get(i).getExec() < main.get(index).getExec()) {
+				if(escalonador.get(i).getExec() < escalonador.get(index).getExec()) {
 					index = i;
 				}
 			else if(p=="EDF")
-				if(main.get(i).getCheg() + main.get(i).getDead() < 
-						main.get(index).getCheg() + main.get(index).getDead()) {
+				if(escalonador.get(i).getCheg() + escalonador.get(i).getDead() < 
+						escalonador.get(index).getCheg() + escalonador.get(index).getDead()) {
 					index = i;
 				}
 		}
@@ -71,22 +72,22 @@ public class Escalonador{
 		System.out.println("b " + t + " " + listaProcessos.size());
 		for(int i = 0; i < listaProcessos.size(); i++)
 			if(listaProcessos.get(i).getCheg() <= t){
-				main.add(listaProcessos.get(i));
+				escalonador.add(listaProcessos.get(i));
 				listaProcessos.remove((listaProcessos.get(0 + i--)));
 			}
 	}
 	
-	public void a() throws IOException {
+	public void main() throws IOException {
 		int quant = listaProcessos.size();
 		int tempo = 0;
 		System.out.println(processo);
 		while(finalizados.size() < quant){
 			b(tempo);
-			if(main.isEmpty()==false){
+			if(escalonador.isEmpty()==false){
 				int proximoProcesso = buscarProcesso(this.processo);
 
-				Processo p = main.get(proximoProcesso);
-				main.remove(0 + proximoProcesso);
+				Processo p = escalonador.get(proximoProcesso);
+				escalonador.remove(0 + proximoProcesso);
 
 				int runtime = 0;
 				if(processo.equals("FIFO")==true || processo.equals("SJF")==true)
@@ -96,7 +97,7 @@ public class Escalonador{
 
 				for(int i = 0; i < listaProcessos.size(); i++){
 					if(listaProcessos.get(i).getCheg() <= tempo + runtime){
-						main.add(listaProcessos.get(i));
+						escalonador.add(listaProcessos.get(i));
 						listaProcessos.remove(0 + (i--));
 					}
 				}
@@ -113,7 +114,7 @@ public class Escalonador{
 					p.setExec(p.getExec() - quantum);
 					p.inserirExecucao(tempo, tempo + quantum - 1);
 					p.inserirExecucao(tempo + quantum, tempo + quantum + sobrecarga - 1);
-					main.add(p);
+					escalonador.add(p);
 					tempo += quantum + sobrecarga - 1;
 				}
 			}
