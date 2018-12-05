@@ -1,3 +1,5 @@
+package org.eclipse.wb.swing;
+
 /*******************************************************************************
  * Copyright (c) 2011 Google, Inc.
  * All rights reserved. This program and the accompanying materials
@@ -8,7 +10,6 @@
  * Contributors:
  *    Google, Inc. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.wb.swing;
 
 import java.awt.Component;
 import java.awt.Container;
