@@ -1,0 +1,13 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.status-red {
+    -fx-background-color:rgba(128,0,0,0.7);
+}
+.status-espera {
+    -fx-background-color:rgba(0,128,128,0.7);
+}
+.status-yellow {
+    -fx-background-color:rgba(128,128,0,0.7);
+}
+.status-blank {
+    -fx-background-color:rgba(128,128,128,0.0);
+}
